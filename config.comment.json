@@ -1,0 +1,13 @@
+{
+    // tbutton settings
+    "tbutton": {
+        // visible on setup?
+        "hide": true
+    },
+
+    // commands go here
+    "commands": {
+        "Pause vmware": "killall -s STOP vmware-vmx",
+        "Continue vmware": "killall -s CONT vmware-vmx"
+    }
+}
