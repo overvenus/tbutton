@@ -34,6 +34,7 @@ import sys
 import os
 import base64
 import json
+import threading
 
 try:
     import pygtk
@@ -139,9 +140,20 @@ class TButton:
 
     @staticmethod
     def exec_command(cmd):
-        if cmd != '':
-            # TODO: running a new thread.
-            print('exec_command stub: %s' % cmd)
+        if cmd == '':
+            return
+
+        def wrap():
+            os.system(cmd)
+            # os.system(u'gdialog --title "TButton" --msgbox "%s" 15 60' % cmd)
+
+        # running in a new thread.
+        try:
+            threading.Thread(target=wrap).start()
+        except RuntimeError:
+            pass
+
+        print('exec_command stub: %s' % cmd)
 
     def show_notify(self, message=None, timeout=None):
         if pynotify and message:
@@ -192,6 +204,8 @@ def main():
 
     window = gtk.Window()
     TButton(window, config_dir, config_name)
+    gtk.gdk.threads_init()  # allow multiple threads to serialize access
+                            # to the Python interpreter
     gtk.main()
 
 
