@@ -94,19 +94,19 @@ class TButton:
             self.window.show_all()
 
         # logo
-        logo_path = os.path.join(self.config_dir, 'tbutton-logo.png')
-        if not os.path.isfile(logo_path):
-            with open(logo_path, 'wb') as fp:
+        self.logo_path = os.path.join(self.config_dir, 'tbutton-logo.png')
+        if not os.path.isfile(self.logo_path):
+            with open(self.logo_path, 'wb') as fp:
                 fp.write(base64.b64decode(LOGO_DATA))
-        self.window.set_icon_from_file(logo_path)
+        self.window.set_icon_from_file(self.logo_path)
 
         # tray
-        self.trayicon = appindicator.Indicator('TButton', 'indicator-messages',
+        self.tray = appindicator.Indicator('TButton', 'indicator-messages',
                                                appindicator.CATEGORY_APPLICATION_STATUS)
-        self.trayicon.set_status(appindicator.STATUS_ACTIVE)
-        self.trayicon.set_attention_icon('indicator-messages-new')
-        self.trayicon.set_icon(logo_path)
-        self.trayicon.set_menu(self.make_menu())
+        self.tray.set_status(appindicator.STATUS_ACTIVE)
+        self.tray.set_attention_icon('indicator-messages-new')
+        self.tray.set_icon(self.logo_path)
+        self.tray.set_menu(self.make_menu())
 
     def make_menu(self):
         menu = gtk.Menu()
@@ -143,14 +143,13 @@ class TButton:
             # TODO: running a new thread.
             print('exec_command stub: %s' % cmd)
 
-    @staticmethod
-    def show_notify(message=None, timeout=None):
+    def show_notify(self, message=None, timeout=None):
         if pynotify and message:
-            notification = pynotify.Notification('TButton', message)
+            notification = pynotify.Notification('TButton', message, icon=self.logo_path)
             notification.set_hint('x', 200)
             notification.set_hint('y', 400)
             if timeout:
-                notification.set_timeout(timeout)
+                notification.set_timeout(timeout * 1000)  # make it ms
             notification.show()
 
     def on_add_clicked(self, widget, data=None):
@@ -162,19 +161,11 @@ class TButton:
     def on_show(self, widget, data=None):
         self.window.show_all()
         self.window.present()
-        print 'on_show'
+        print('on_show')
 
     def on_hide(self, widget, data=None):
         self.window.hide_all()
-
-    def on_stop(self, widget, data=None):
-        print "on_stop"
-
-    def show_hide_toggle(self, widget, data=None):
-        if self.window.get_property('visible'):
-            self.on_hide(widget, data)
-        else:
-            self.on_show(widget, data)
+        print('on_hide')
 
     def delete_event(self, widget, data=None):
         self.on_hide(widget, data)
