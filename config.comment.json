@@ -7,7 +7,24 @@
 
     // commands go here
     "commands": {
-        "Pause vmware": "killall -s STOP vmware-vmx",
-        "Continue vmware": "killall -s CONT vmware-vmx"
+        "NetLogin": "netlogin",
+
+        // commands group
+        // group name
+        "Stop": {
+            // command = command % item
+            "command": "killall -s STOP %s",
+            "items": {
+                // item name
+                "vmware": "vmware-vmx"
+            }
+        },
+
+        "Cont": {
+            "command": "killall -s CONT %s",
+            "items": {
+                "vmware": "vmware-vmx"
+            }
+        }
     }
 }

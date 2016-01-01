@@ -24,8 +24,21 @@ DEFAULT_CONFIG = """\
     },
 
     "commands": {
-        "Pause vmware": "killall -s STOP vmware-vmx",
-        "Continue vmware": "killall -s CONT vmware-vmx"
+        "NetLogin": "netlogin",
+
+        "Stop": {
+            "command": "killall -s STOP %s",
+            "items": {
+                "vmware": "vmware-vmx"
+            }
+        },
+
+        "Cont": {
+            "command": "killall -s CONT %s",
+            "items": {
+                "vmware": "vmware-vmx"
+            }
+        }
     }
 }
 """
@@ -114,22 +127,32 @@ class TButton:
 
         for k, v in self.commands.iteritems():
             item = gtk.MenuItem(k)
-            item.connect('activate', self.on_menu_item_activate, v)
-            item.show()
+            if type(v) == unicode:
+                # single command
+                item.connect('activate', self.on_menu_item_activate, v)
+            elif type(v) == dict:
+                # command group
+                sub_menu = gtk.Menu()
+                prefix = v[u'command']
+                for sk, sv in v[u'items'].iteritems():
+                    sub_item = gtk.MenuItem(sk)
+                    sub_command = prefix % sv
+                    sub_item.connect('activate', self.on_menu_item_activate, sub_command)
+                    sub_menu.add(sub_item)
+                item.set_submenu(sub_menu)
             menu.append(item)
 
-        specialitem = list()
-        specialitem.append((u'显示', self.on_show))
-        specialitem.append((u'隐藏', self.on_hide))
-        specialitem.append((u'退出', self.on_quit))
+        # separator
+        separator = gtk.SeparatorMenuItem()
+        menu.append(separator)
+        menu.append(separator)
 
-        for text, callback in specialitem:
-            item = gtk.MenuItem(text)
-            item.connect('activate', callback)
-            item.show()
-            menu.append(item)
+        # quit
+        quit_item = gtk.MenuItem(u'退出')
+        quit_item.connect('activate', self.on_quit)
+        menu.append(quit_item)
 
-        menu.show()
+        menu.show_all()
         return menu
 
     def on_menu_item_activate(self, widget, data=None):
