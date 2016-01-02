@@ -87,13 +87,23 @@ class TButton:
             with open(self.logo_path, 'wb') as fp:
                 fp.write(base64.b64decode(LOGO_DATA))
 
+        # configure
+        self.load_config()
+        self.menu = self.make_menu()
+
         # tray
         self.tray = appindicator.Indicator('TButton', 'indicator-messages',
                                                appindicator.CATEGORY_APPLICATION_STATUS)
         self.tray.set_status(appindicator.STATUS_ACTIVE)
         self.tray.set_attention_icon('indicator-messages-new')
         self.tray.set_icon(self.logo_path)
-        self.tray.set_menu(self.make_menu())
+        self.tray.set_menu(self.menu)
+
+    def load_config(self):
+        j = json.load(file(os.path.join(self.config_dir, self.config_name)),
+                      object_pairs_hook=collections.OrderedDict)
+        self.config = j['tbutton']
+        self.commands = j['commands']
 
     def make_menu(self):
         menu = gtk.Menu()
@@ -103,7 +113,7 @@ class TButton:
             if type(v) == unicode:
                 # single command
                 item.connect('activate', self.on_menu_item_activate, v)
-            elif type(v) == dict:
+            elif type(v) == collections.OrderedDict:
                 # command group
                 sub_menu = gtk.Menu()
                 prefix = v[u'command']
@@ -119,6 +129,11 @@ class TButton:
         separator = gtk.SeparatorMenuItem()
         menu.append(separator)
         menu.append(separator)
+
+        # refresh
+        refresh_item = gtk.MenuItem(u'刷新')
+        refresh_item.connect('activate', self.on_refresh)
+        menu.append(refresh_item)
 
         # quit
         quit_item = gtk.MenuItem(u'退出')
@@ -159,6 +174,11 @@ class TButton:
             if timeout:
                 notification.set_timeout(timeout * 1000)  # make it ms
             notification.show()
+
+    def on_refresh(self, widget, data=None):
+        self.load_config()
+        self.menu = self.make_menu()
+        self.tray.set_menu(self.menu)
 
     def on_quit(self, widget, data=None):
         gtk.main_quit()
