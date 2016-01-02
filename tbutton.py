@@ -48,6 +48,7 @@ import os
 import base64
 import json
 import threading
+import collections
 
 try:
     import pygtk
@@ -70,49 +71,21 @@ except ImportError:
 
 
 class TButton:
-    def __init__(self, window, config_dir='./.TButton', config_name='config.json'):
+    def __init__(self, config_dir='./.TButton', config_name='config.json'):
         self.config_dir = config_dir
         self.config_name = config_name
 
-        # main window
-        self.window = window
-        self.window.set_size_request(652, 447)
-        self.window.set_position(gtk.WIN_POS_CENTER)
-        self.window.connect('delete-event', self.delete_event)
-
-        # main box container
-        self.box = gtk.HBox(False, 0)
-        self.window.add(self.box)
-
-        # add button
-        self.add_button = gtk.Button('Add')
-        self.add_button.connect('clicked', self.on_add_clicked)
-        self.box.pack_start(self.add_button, True, True, 0)
-        self.add_button.show()
-
-        # remove button
-        self.remove_button = gtk.Button('Remove')
-        self.remove_button.connect('clicked', self.on_remove_clicked)
-        self.box.pack_start(self.remove_button, True, True, 0)
-        self.remove_button.show()
-
-        self.window.connect('delete-event', lambda w, e: gtk.main_quit())
-
         # configures
-        j = json.load(file(os.path.join(self.config_dir, self.config_name)))
+        j = json.load(file(os.path.join(self.config_dir, self.config_name)),
+                      object_pairs_hook=collections.OrderedDict)
         self.config = j['tbutton']
         self.commands = j['commands']
-
-        # visible on setup?
-        if not self.config['hide']:
-            self.window.show_all()
 
         # logo
         self.logo_path = os.path.join(self.config_dir, 'tbutton-logo.png')
         if not os.path.isfile(self.logo_path):
             with open(self.logo_path, 'wb') as fp:
                 fp.write(base64.b64decode(LOGO_DATA))
-        self.window.set_icon_from_file(self.logo_path)
 
         # tray
         self.tray = appindicator.Indicator('TButton', 'indicator-messages',
@@ -187,26 +160,6 @@ class TButton:
                 notification.set_timeout(timeout * 1000)  # make it ms
             notification.show()
 
-    def on_add_clicked(self, widget, data=None):
-        print('add_command stub')
-
-    def on_remove_clicked(self, widget, data=None):
-        print('remove_command stub')
-
-    def on_show(self, widget, data=None):
-        self.window.show_all()
-        self.window.present()
-        print('on_show')
-
-    def on_hide(self, widget, data=None):
-        self.window.hide_all()
-        print('on_hide')
-
-    def delete_event(self, widget, data=None):
-        self.on_hide(widget, data)
-        # 默认最小化至托盘
-        return True
-
     def on_quit(self, widget, data=None):
         gtk.main_quit()
 
@@ -225,8 +178,7 @@ def main():
             fp.write(DEFAULT_CONFIG)
         os.chmod(filename, 0755)
 
-    window = gtk.Window()
-    TButton(window, config_dir, config_name)
+    TButton(config_dir, config_name)
     gtk.gdk.threads_init()  # allow multiple threads to serialize access
                             # to the Python interpreter
     gtk.main()
