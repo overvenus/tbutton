@@ -1,0 +1,15 @@
+Source: indicator-tbutton-0.1
+Section: utils
+Priority: optional
+Maintainer: Neil Shen <overvenus@gmail.com>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.4
+#Homepage: <insert the upstream URL, if relevant>
+Vcs-Git: git://github.com/overvenus/tbutton
+Vcs-Browser: https://github.com/overvenus/tbutton
+
+Package: indicator-tbutton
+Architecture: any
+Depends: ${python:Depends}, ${shlibs:Depends}, ${misc:Depends}, python:any (>= 2.6.6-7~), python-appindicator, python-gtk2, python-pyinotify
+Description: TButton Indicator
+ A mini commands launcher for Ubuntu 14.04LTS

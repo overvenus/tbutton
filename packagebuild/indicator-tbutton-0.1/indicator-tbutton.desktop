@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Exec=/usr/bin/indicator-tbutton
+Icon=tbutton-icon.png
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name=TButton
+Comment=Simple indicator applet to execute commands in a flash.
