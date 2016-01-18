@@ -195,7 +195,7 @@ def main():
     if not os.path.exists(filename):
         with open(filename, 'w') as fp:
             fp.write(DEFAULT_CONFIG)
-        os.chmod(filename, 0755)
+        os.chmod(filename, 0644)
 
     TButton(config_dir, config_name)
     gtk.gdk.threads_init()  # allow multiple threads to serialize access
