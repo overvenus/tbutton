@@ -128,7 +128,6 @@ class TButton:
         # separator
         separator = gtk.SeparatorMenuItem()
         menu.append(separator)
-        menu.append(separator)
 
         # refresh
         refresh_item = gtk.MenuItem(u'刷新')
