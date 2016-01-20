@@ -7,7 +7,7 @@ TEMPLATE=indicator-tbutton-template
 
 update:
 	mkdir -m 755 -p $(LATESTDIR)
-	cp -r indicator-tbutton-template/debian $(LATESTDIR)
+	cp -r $(TEMPLATE)/debian $(LATESTDIR)
 	cp $(TEMPLATE)/Makefile $(LATESTDIR)
 	cp $(TEMPLATE)/indicator-tbutton.desktop $(LATESTDIR)/indicator-tbutton.desktop
 	cp ../tbutton.py $(LATESTDIR)/indicator-tbutton
@@ -22,7 +22,11 @@ clean:
 	-rm *.deb
 	-rm *.dsc
 	-rm *.changes
+	-rm *.upload
 
-build: pack
+build: clean pack
 	$(MAKE) -C $(LATESTDIR) build
 	cp *.deb deb
+
+build-s: clean pack
+	$(MAKE) -C $(LATESTDIR) build-s

@@ -63,7 +63,7 @@ binary-arch: build install
 	dh_icons
 	dh_installmenu
 	# dh_python2
-	dh_pysupport
+	# dh_pysupport
 	dh_link
 	dh_strip
 	dh_compress

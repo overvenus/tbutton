@@ -3,28 +3,25 @@ Tbutton
 
 A mini commands launcher!
 
-## HOW-TO
+## Install
 
-### INSTALL
+The recommended way:
 
 ```
+sudo add-apt-repository ppa:overvenus/ppa
 sudo apt-get update
-sudo apt-get install python-appindicator
-./tbutton.py & disown
+sudo apt-get install indicator-tbutton
 ```
-### Configure
+
+or you can manually download [here](https://github.com/overvenus/tbutton/releases) and install it.
+
+## Configure
 
 Configure file can be found in `~/.config/Tbutton/`, also tray icon can be changed easily.
 
 __configure template__:
 ```json
 {
-    // tbutton settings
-    "tbutton": {
-        // visible on setup?
-        "hide": true
-    },
-
     // commands go here
     "commands": {
         "NetLogin": "netlogin",
